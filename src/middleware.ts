@@ -11,11 +11,6 @@ export default async function middleware(req: NextRequest) {
     return xssResponse;
   }
 
-  // Initialize variables to track authentication state.
-  let authType: "native" | "oauth" | null = null;
-  let userId: string | null = null;
-  let surveyed: boolean | undefined = undefined;
-
   // Check if the custom native auth cookie is present.
   const sessionToken = req.cookies.get("next-auth.session-token")?.value;
 

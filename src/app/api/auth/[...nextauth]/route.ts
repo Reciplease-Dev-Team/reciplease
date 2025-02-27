@@ -1,9 +1,8 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions, Account, Profile, User  } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import prisma from "../../services/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import { CredentialType, Provider } from "@prisma/client";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -48,7 +47,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
 
-    async signIn({ user, account, profile }: { user: any; account?: any; profile?: any }) {
+    async signIn({ user, account, profile }: { user: User; account?: Account; profile?: Profile }) {
     
       if (!profile?.email) {
         throw new Error("No email found in profile");
