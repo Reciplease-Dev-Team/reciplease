@@ -51,6 +51,7 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({ recipe, onClose }) => {
     localStorage.setItem("dailyCalories", newCalories.toString());
     localStorage.setItem("dailyProtein", newProtein.toString());
 
+    // call to store tracker here?
     await fetch("/api/");
     toast({
       title: "Nutrition Added!",

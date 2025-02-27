@@ -17,6 +17,8 @@ export async function PATCH(req: NextRequest) {
     );
   }
 
+  console.log("ID:", userId);
+
   try {
     const body = await parseBody(req);
 

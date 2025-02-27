@@ -55,6 +55,7 @@ export default async function middleware(req: NextRequest) {
   // Proceed with the request.
   const response = NextResponse.next();
   if (userId) {
+    console.log("Setting x-user-id...");
     response.headers.set("X-User-Id", userId);
   }
   console.log("Set ID:", userId);

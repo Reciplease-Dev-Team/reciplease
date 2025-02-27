@@ -104,6 +104,7 @@ const authOptions: NextAuthOptions = {
           select: { id: true, surveyed: true },
         });
         token.id = dbUser?.id as string;
+        console.log("Token ID:", token.id);
         token.surveyed = dbUser?.surveyed || false;
       }
       return token;
