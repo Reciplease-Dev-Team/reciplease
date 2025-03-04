@@ -47,15 +47,16 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
 
-    async signIn({ user, account, profile }: { user: User; account?: Account; profile?: Profile }) {
+    async signIn({ user, account, profile }: { user: User; account: Account | null; profile?: Profile }) {
     
       if (!profile?.email) {
         throw new Error("No email found in profile");
       }
     
+      const userEmail = user.email || profile.email;
       // Find existing user by email
       const existingUser = await prisma.user.findUnique({
-        where: { email: profile.email },
+        where: { email: userEmail },
         include: { accounts: true }, 
       });
     
@@ -86,7 +87,7 @@ export const authOptions: NextAuthOptions = {
       if (account) {
         await prisma.user.create({
           data: {
-            email: profile.email,
+            email: userEmail,
             name: profile.name ?? "Unknown",
             accounts: {
               create: {
