@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import GithubProvider from "next-auth/providers/github";
+import GitHubProvider from "next-auth/providers/github";
 import prisma from "../../services/prisma";
 import { CredentialType, Provider } from "@prisma/client";
 
@@ -19,7 +19,7 @@ const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
-    GithubProvider({
+    GitHubProvider({
       id: "github",
       name: "GitHub",
       clientId: process.env.GITHUB_CLIENT_ID!,
@@ -34,7 +34,6 @@ const authOptions: NextAuthOptions = {
       }
       console.log("sign in callback triggered");
 
-      // Extract provider data from account
       const email = profile.email;
       const provider = account?.provider;
       const providerAccountId = account?.providerAccountId;
@@ -73,13 +72,13 @@ const authOptions: NextAuthOptions = {
         });
 
         if (existingCredential) {
-          // Compare stored value with incoming OAuth unique ID
+          // compare stored value with incoming OAuth unique ID in order to verify user
           if (existingCredential.value !== providerAccountId) {
             console.error("Credential mismatch: possible exploit attempt");
             return false;
           }
         } else {
-          // No credential for this provider exists; create one.
+          // no credential for this provider exists; create one.
           await prisma.credential.create({
             data: {
               type: CredentialType.OAUTH,
@@ -93,11 +92,11 @@ const authOptions: NextAuthOptions = {
       return true;
     },
     async jwt({ token, profile }) {
-      // If we get profile data from the provider, add its email to the token
+      // if we get profile data from the provider, add its email to the token
       if (profile?.email) {
         token.email = profile.email;
       }
-      // Lookup the user by email and set token.id and token.surveyed
+      // lookup the user by email and set token.id and token.surveyed
       if (token.email) {
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
@@ -109,7 +108,7 @@ const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      // Attach the token fields to the session
+      // attach the token fields to the session
       session.user.id = token.id as string;
       session.user.email = token.email as string;
       session.user.surveyed = token.surveyed as boolean;

@@ -1,13 +1,15 @@
-"use client";
-import Navbar from "@/components/navigation/NavBar";
-import { useRouter } from "next/navigation";
+import { getServerSession } from "next-auth";
+import Link from "next/link";
+import { redirect, useRouter } from "next/navigation";
 
-export default function Home() {
-  const router = useRouter();
+export default async function Home() {
+  const session = await getServerSession();
+  console.log("session on home page: ", session);
+  if (session) {
+    redirect("/profile");
+  }
   return (
     <>
-      <Navbar />
-
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-6">
         <h1 className="text-4xl sm:text-5xl font-bold text-gray-800 text-left">
           AI-powered recipe recommendations for your health
@@ -16,11 +18,11 @@ export default function Home() {
           Your personal recipe assistant, tailored for you.
         </p>
         <div className="mt-6">
-          <button
+          <Link
             className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 transition duration-300"
-            onClick={() => router.push("/login")}>
+            href="/register">
             Get Started
-          </button>
+          </Link>
         </div>
       </div>
     </>

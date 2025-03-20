@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { NextAuthProvider } from "./providers/nextauth-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { getServerSession } from "next-auth";
+import NavBar from "../components/navigation/NavBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,16 +21,18 @@ export const metadata: Metadata = {
   description: "AI-powered recipe recommendations for your health",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession();
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <NextAuthProvider>
+        <NextAuthProvider session={session ? session : undefined}>
+          <NavBar />
           <div className=" overflow-y-auto">
             {children}
             <Toaster />
