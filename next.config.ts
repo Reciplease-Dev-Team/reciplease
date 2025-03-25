@@ -2,6 +2,9 @@
 
 const nextConfig = {
   /* config options here */
+  experimental: {
+    serverActions: { allowOrigins: ["github.com", "google.com"] },
+  },
   webpack(config: { module: { rules: { test: RegExp; use: string[] }[] } }) {
     config.module.rules.push({
       test: /\.svg$/,

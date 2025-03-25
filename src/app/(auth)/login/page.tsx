@@ -29,28 +29,26 @@ const Login = () => {
 
   const onSubmit = async (values: LoginFormValues) => {
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+      // const response = await fetch("/api/auth/login", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(values),
+      // });
+
+      // if (!response.ok) {
+      //   const errorData = await response.json();
+      //   console.log(errorData);
+      //   alert(
+      //     `Error in Login: ${errorData.error}. Please register or try again later.`
+      //   );
+      //   return;
+      // }
+
+      // we may not use this, just following the workflow step by step to understand how i can reconcile the processes
+      await signIn("credentials", {
+        email: values.email,
+        password: values.password,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.log(errorData);
-        alert(
-          `Error in Login: ${errorData.error}. Please register or try again later.`
-        );
-        return;
-      }
-
-      const body = await response.json();
-
-      if (body.userSurveyed === false) {
-        router.push("/register/survey");
-      } else {
-        router.push("/profile");
-      }
     } catch (err) {
       console.error("Unexpected error during login:", err);
       alert(
