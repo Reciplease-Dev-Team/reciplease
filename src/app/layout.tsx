@@ -27,6 +27,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession();
+  if (session) {
+    console.log("session on layout: ", session);
+  }
   return (
     <html lang="en">
       <body

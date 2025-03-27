@@ -45,7 +45,7 @@ const Register = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json(); // Parse error response, if available
+        const errorData = await response.json();
         alert(
           `Error in Registration: ${errorData.error}: ${errorData.details}`
         );

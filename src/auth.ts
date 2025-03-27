@@ -5,7 +5,7 @@ import Google from "next-auth/providers/google";
 import { findUserByEmail } from "./app/api/services/authService";
 import { loginUser, registerUser } from "./app/api/controllers/authController";
 import prisma from "./app/api/services/prisma";
-import { CredentialType, Provider } from "@prisma/client";
+// import { CredentialType, Provider } from "@prisma/client";
 
 const handler = NextAuth({
   providers: [
@@ -80,6 +80,51 @@ const handler = NextAuth({
           if (
             !googleCredential ||
             account.providerAccountId.toString() !== googleCredential.value
+          ) {
+            return false;
+          }
+        }
+      } else if (account?.provider === "github") {
+        const userExists = await findUserByEmail(user.email!);
+        if (
+          !userExists ||
+          !userExists.credentials.some((c) => c.provider === "GITHUB")
+        ) {
+          // register the user
+          const result = await prisma.user.upsert({
+            create: {
+              email: user.email!,
+              name: user.name!,
+              credentials: {
+                create: {
+                  type: "OAUTH",
+                  provider: "GITHUB",
+                  value: account.providerAccountId.toString(),
+                },
+              },
+            },
+            update: {
+              credentials: {
+                create: {
+                  type: "OAUTH",
+                  provider: "GITHUB",
+                  value: account.providerAccountId.toString(),
+                },
+              },
+            },
+            where: { email: user.email! },
+          });
+          if (!result) {
+            return false;
+          }
+        } else {
+          // try to login the user
+          const githubCredential = userExists.credentials.find(
+            (c) => c.provider === "GITHUB"
+          );
+          if (
+            !githubCredential ||
+            account.providerAccountId.toString() !== githubCredential.value
           ) {
             return false;
           }
